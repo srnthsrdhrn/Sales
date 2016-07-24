@@ -78,13 +78,13 @@ public class Transaction extends AppCompatActivity implements  NavigationView.On
             if (!gpsTracker.canGetLocation) {
                 gpsTracker.showSettingsAlert();
             } else {
-                int loc_lat = (int) (gpsTracker.latitude * 10000);
-                int loc_long = (int) (gpsTracker.longitude * 10000);
+                int loc_lat = (int) (gpsTracker.location.getLatitude()* 10000);
+                int loc_long = (int) (gpsTracker.location.getLongitude() * 10000);
                 Location location = database_handler.getHome(gpsTracker.location);
                 if (location != null) {
                     int loc1_lat = (int) (location.getLatitude() * 10000);
                     int loc1_long = (int) (location.getLongitude() * 10000);
-                    if (loc_lat == loc1_lat && loc_long == loc1_long) {
+                    if ((loc_lat >=loc1_lat-5||loc_lat<=loc1_lat+5) && (loc_long >= loc1_long-5||loc_long<=loc1_long+5)) {
                         start1.setEnabled(true);
                         start.setVisibility(View.INVISIBLE);
                         start1.setOnClickListener(new View.OnClickListener() {
@@ -156,6 +156,9 @@ public class Transaction extends AppCompatActivity implements  NavigationView.On
     protected void onResume() {
         super.onResume();
             gpsTracker.getLocation();
+        if(gpsTracker.location==null){
+            gpsTracker.showSettingsAlert();
+        }else {
             if (Employee.sis_admin == 'Y') {
                 final Intent intent = new Intent(Transaction.this, MapsActivity.class);
                 intent.putExtra("Latitude", gpsTracker.latitude);
@@ -190,6 +193,7 @@ public class Transaction extends AppCompatActivity implements  NavigationView.On
                 }
 
             }
+        }
         }
     @SuppressWarnings("StatementWithEmptyBody")
     @Override

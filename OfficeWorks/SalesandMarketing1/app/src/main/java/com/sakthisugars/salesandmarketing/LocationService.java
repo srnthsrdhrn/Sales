@@ -41,7 +41,7 @@ public class LocationService extends Service {
     public static int START;
     private NotificationCompat.Builder builder;
     private Location location;
-
+    private int i=0;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -51,7 +51,6 @@ public class LocationService extends Service {
         mgr = (LocationManager) getSystemService(LOCATION_SERVICE);
         gps_locationer = new Locationer(getBaseContext());
         network_locationer = new Locationer(getBaseContext());
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -84,8 +83,8 @@ public class LocationService extends Service {
                     mgr.requestLocationUpdates(providerFine, 2000, 0, gps_locationer);
                     location=mgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 }
-
-                showNotification("Latitude: "+location.getLatitude()+"\n Longitude: "+ location.getLongitude());            }
+                showNotification("i = "+ i++);
+            }
         },3000);
         return 0;
     }
