@@ -176,21 +176,16 @@ public class Transaction extends AppCompatActivity implements  NavigationView.On
                     if (loc_lat == loc1_lat && loc_long == loc1_long) {
                         start.setEnabled(false);
                         start.setVisibility(View.INVISIBLE);
-                        start1.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                LocationService.START = 1;
-                                startActivity(new Intent(Transaction.this, CustomerPage.class));
-                            }
-                        });
                     } else {
                         start.setEnabled(false);
-                        start.setBackgroundColor(Color.GRAY);
+                        start.setVisibility(View.INVISIBLE);
+                        start1.setEnabled(false);
                         Toast.makeText(this, "Goto to Head Office and Login again to Start", Toast.LENGTH_LONG).show();
                     }
                 } else {
                     start.setEnabled(false);
-                    start.setBackgroundColor(Color.GRAY);
+                    start.setVisibility(View.INVISIBLE);
+                    start1.setEnabled(false);
                     Toast.makeText(this, "Admin Must Login and Verify Head Office Location in Settings", Toast.LENGTH_LONG).show();
                 }
 

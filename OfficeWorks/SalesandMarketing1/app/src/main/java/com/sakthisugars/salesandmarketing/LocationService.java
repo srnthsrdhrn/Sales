@@ -84,8 +84,8 @@ public class LocationService extends Service {
                     mgr.requestLocationUpdates(providerFine, 2000, 0, gps_locationer);
                     location=mgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 }
-                Toast.makeText(LocationService.this,"Latitude: "+location.getLatitude()+ " \n Longitude: "+ location.getLongitude(),Toast.LENGTH_LONG).show();
-                showNotification();            }
+
+                showNotification("Latitude: "+location.getLatitude()+"\n Longitude: "+ location.getLongitude());            }
         },3000);
         return 0;
     }
@@ -123,9 +123,8 @@ public class LocationService extends Service {
     /**
      * Show a notification while this service is running.
      */
-    private void showNotification() {
+    private void showNotification(String text) {
         // In this sample, we'll use the same text for the ticker and the expanded notification
-        CharSequence text = getText(R.string.local_service_started);
         // The PendingIntent to launch our activity if the user selects this notification
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, Login.class), 0);
