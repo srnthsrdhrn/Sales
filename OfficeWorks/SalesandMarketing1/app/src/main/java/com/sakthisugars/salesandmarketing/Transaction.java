@@ -84,7 +84,8 @@ public class Transaction extends AppCompatActivity implements  NavigationView.On
                 if (location != null) {
                     int loc1_lat = (int) (location.getLatitude() * 10000);
                     int loc1_long = (int) (location.getLongitude() * 10000);
-                    if ((loc_lat >=loc1_lat-5||loc_lat<=loc1_lat+5) && (loc_long >= loc1_long-5||loc_long<=loc1_long+5)) {
+                    boolean flag=(loc_lat >=(loc1_lat-5)||loc_lat<=(loc1_lat+5)||loc_lat==loc1_lat) && (loc_long >= (loc1_long-5)||loc_long<=(loc1_long+5)||loc_long==loc1_long);
+                    if (flag) {
                         start1.setEnabled(true);
                         start.setVisibility(View.INVISIBLE);
                         start1.setOnClickListener(new View.OnClickListener() {
@@ -97,6 +98,9 @@ public class Transaction extends AppCompatActivity implements  NavigationView.On
                             }
                         });
                     } else {
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                            start1.setBackgroundColor(Color.DKGRAY);
+                        }
                         start.setEnabled(false);
                         start.setVisibility(View.INVISIBLE);
                         start1.setEnabled(false);
@@ -104,6 +108,9 @@ public class Transaction extends AppCompatActivity implements  NavigationView.On
                     }
                 } else {
                     start.setEnabled(false);
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                        start1.setBackgroundColor(Color.DKGRAY);
+                    }
                     start.setVisibility(View.INVISIBLE);
                     start1.setEnabled(false);
                     Toast.makeText(this, "Admin Must Login and Verify Head Office Location in Settings", Toast.LENGTH_LONG).show();
@@ -124,7 +131,6 @@ public class Transaction extends AppCompatActivity implements  NavigationView.On
                 final Intent intent = new Intent(Transaction.this, MapsActivity.class);
                 intent.putExtra("Latitude", gpsTracker.latitude);
                 intent.putExtra("Longitude", gpsTracker.longitude);
-                start1.setEnabled(false);
                 start1.setVisibility(View.INVISIBLE);
                 start.setOnClickListener(new View.OnClickListener() {
                     @Override

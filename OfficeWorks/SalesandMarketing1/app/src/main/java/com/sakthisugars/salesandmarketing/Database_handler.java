@@ -320,15 +320,15 @@ public class Database_handler extends SQLiteOpenHelper {
         db.insert(TRACKER_DATA_TABLE, null, contentValues);
     }
 
-    public Location[] getLocation(SQLiteDatabase db, String time) {
-        Cursor c = db.rawQuery("SELECT * FROM " + TRACKER_DATA_TABLE + " WHERE " + TRACKER_PRIMARY_KEY + "=?", new String[]{time});
+    public Location[] getLocation(SQLiteDatabase db,Location location) {
+        Cursor c = db.rawQuery("SELECT * FROM " + TRACKER_DATA_TABLE,null);
         if (c.moveToFirst()) {
             Location[] locations = new Location[c.getCount()];
             for (int i = 0; i < c.getCount(); i++) {
-                locations[i] = new Location("dummy provider");
+                locations[i] = location;
                 locations[i].setLatitude(Double.parseDouble(c.getString(c.getColumnIndex(TRACKER_LATITUDE))));
                 locations[i].setLongitude(Double.parseDouble(c.getString(c.getColumnIndex(TRACKER_LONGITUDE))));
-                locations[i].setTime(Long.parseLong(time));
+                locations[i].setTime(Long.parseLong(c.getString(c.getColumnIndex(TRACKER_PRIMARY_KEY))));
                 c.moveToNext();
             }
             c.close();

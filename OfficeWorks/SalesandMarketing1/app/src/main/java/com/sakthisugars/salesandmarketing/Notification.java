@@ -10,8 +10,8 @@ import android.content.Intent;
 public class Notification extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        context.stopService(new Intent(context,Settings.GPSTracker.class));
-        LocationService.START=0;
+
+        context.stopService(new Intent(context,LocationService.class));
 
     }
 }

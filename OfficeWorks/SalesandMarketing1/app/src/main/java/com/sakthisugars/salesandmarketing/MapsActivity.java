@@ -1,13 +1,18 @@
 package com.sakthisugars.salesandmarketing;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Canvas;
 import android.graphics.Color;
-import android.os.AsyncTask;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,21 +22,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -39,10 +33,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private float ZOOM_LEVEL= 18.0f;//if the number increases, the zoom also increases
     private FloatingActionButton fab;
     private  LatLng home;
+    Database_handler database_handler;
+    SQLiteDatabase db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        database_handler= new Database_handler(this,Database_handler.DATABASE_NAME,null,Database_handler.DATABASE_VERSION);
+        db=database_handler.getWritableDatabase();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -72,10 +70,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double lat = getIntent().getExtras().getDouble("Latitude");
         double log = getIntent().getExtras().getDouble("Longitude");
         // Add a marker in Sydney and move the camera
-        home = new LatLng(lat,log);
+        home = new LatLng(lat, log);
+        Location location = new Location("dummy provider");
+        Location[] locations = database_handler.getLocation(db, location);
+        if(locations!=null){
+            for (int i = 0; i < locations.length; i++) {
+                Location location1 = locations[i];
+                Date date = new Date(location1.getTime());
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+                SimpleDateFormat dateFormat1 = new SimpleDateFormat("KK:mm a",Locale.US);
+                String date1="Date: "+dateFormat.format(date);
+                String time= "Time: "+dateFormat1.format(date);
+                Marker marker = mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(location1.getLatitude(), location1.getLongitude()))
+                        .title(date1)
+                        .snippet(time));
+                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        marker.showInfoWindow();
+                        return false;
+                    }
+                });
+            }
+    }
         Marker marker = mMap.addMarker(new MarkerOptions().position(home)
                 .title("Head Office")
                 .snippet("This is the Head office Location"));
+                marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {

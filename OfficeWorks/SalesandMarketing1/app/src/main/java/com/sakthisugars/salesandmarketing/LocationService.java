@@ -8,6 +8,8 @@ import android.Manifest;
 import android.app.Notification;
 // for level below 11
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
+import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -33,6 +35,8 @@ import android.os.SystemClock;
 import android.widget.Toast;
 import android.os.Process;
 
+import java.util.Date;
+
 public class LocationService extends Service {
     private NotificationManager mNM;
     private int NOTIFICATION = R.string.local_service_started;
@@ -42,19 +46,32 @@ public class LocationService extends Service {
     private NotificationCompat.Builder builder;
     private Location location;
     private int i=0;
-
+    private Handler mHandler;
+    private Database_handler database_handler;
+    SQLiteDatabase db;
+    long mInterval=5*60*1000;//5 minutes
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        android.os.Debug.waitForDebugger();
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // Display a notification about us starting.  We put an icon in the status bar.
+        //android.os.Debug.waitForDebugger();
         mgr = (LocationManager) getSystemService(LOCATION_SERVICE);
         gps_locationer = new Locationer(getBaseContext());
         network_locationer = new Locationer(getBaseContext());
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                START=1;
+        database_handler= new Database_handler(this,Database_handler.DATABASE_NAME,null,Database_handler.DATABASE_VERSION);
+        db=database_handler.getWritableDatabase();
+        mHandler = new Handler();
+        mStatusChecker.run();
+        return 0;
+    }
+
+
+    final Runnable mStatusChecker = new Runnable() {
+        @Override
+        public void run() {
+            try {
+
+                START = 1;
                 Criteria criteria = new Criteria();
                 criteria.setAltitudeRequired(false);
                 criteria.setBearingRequired(false);
@@ -77,20 +94,30 @@ public class LocationService extends Service {
                         return;
                     }
                     mgr.requestLocationUpdates(providerCoarse, 30000, 5, network_locationer);
-                    location= mgr.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    location = mgr.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 }
-                if (providerFine != null) {
+                if (providerFine != null&&(mgr.getAllProviders().contains(LocationManager.GPS_PROVIDER))) {
                     mgr.requestLocationUpdates(providerFine, 2000, 0, gps_locationer);
-                    location=mgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    location = mgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 }
-                showNotification("i = "+ i++);
+            }finally {
+                if(location!=null) {
+                    double lat = location.getLatitude() % 0.00001;
+                    lat = location.getLatitude() - lat;
+                    double longt = location.getLongitude() % 0.00001;
+                    longt = location.getLongitude() - longt;
+                    //showNotification("Lat: "+ lat+"Long: "+ longt);
+                    Date date = new Date();
+                    database_handler.storeLocation(db, lat + "", longt + "", date.getTime() + "");
+                    // String time=database_handler.GetSettings(db, Database_handler.SETTINGS_LOCATION_CHECK_TIMER);
+                    //if(time!=null)
+                    // mHandler.postDelayed(mStatusChecker,Long.parseLong(time));
+                    //else
+                }
+                    mHandler.postDelayed(mStatusChecker,mInterval);
             }
-        },3000);
-        return 0;
-    }
-
-
-
+        }
+    };
     @Override
     public void onDestroy() {
         START=0;
@@ -109,6 +136,7 @@ public class LocationService extends Service {
         }
         mgr.removeUpdates(network_locationer);
         // Tell the user we stopped.
+        mHandler.removeCallbacks(mStatusChecker);
         Toast.makeText(this, "local service is stopped", Toast.LENGTH_SHORT).show();
     }
 

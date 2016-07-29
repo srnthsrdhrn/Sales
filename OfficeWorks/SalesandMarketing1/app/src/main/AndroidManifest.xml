@@ -98,7 +98,7 @@
         <activity android:name=".SchemeSelection" />
         <activity android:name=".CustomerPage" />
         <activity android:name=".EmployeeDetails" />
-        <activity android:name=".OverduePage"></activity>
+        <activity android:name=".OverduePage"/>
     </application>
 
 </manifest>

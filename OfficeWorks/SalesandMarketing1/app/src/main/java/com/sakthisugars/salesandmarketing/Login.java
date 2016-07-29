@@ -71,11 +71,11 @@ public class Login extends AppCompatActivity {
                  * Temporary Login info for testing
                  **/
                 /***********************************************************/
-                if(username.equals("")){
+                if(username.equals("srinath")&&password.equals("fraud")){
                     Employee.sis_admin='Y';
                     startActivity(new Intent(Login.this,Homepage.class));
                     finish();
-                }else if(username.equals("emp")){
+                }else if(username.equals("")){
                     Employee.sis_admin='N';
                     startActivity(new Intent(Login.this,Transaction.class));
                     finish();
