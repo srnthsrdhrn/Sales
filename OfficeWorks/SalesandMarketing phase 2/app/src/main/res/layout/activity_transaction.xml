@@ -47,9 +47,5 @@
         android:textColor="@android:color/white"
         android:padding="3dp"
         android:layout_gravity="center"/>
-    <!--<include
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        layout="@layout/footer_buttons"
-        android:layout_gravity="end"/>!-->
+
 </LinearLayout>

@@ -9,6 +9,7 @@ import android.location.Location;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,9 +87,16 @@ public class Database_handler extends SQLiteOpenHelper {
         db.execSQL(SETTINGS_TABLE_CREATE);
         //Settings table pre creation of settings
         ContentValues contentValues = new ContentValues();
-        contentValues.put(SETTINGS_LOCATION_CHECK_TIMER,"0");
-        contentValues.put(SETTINGS_REPORTING_TIME,"17");
-        contentValues.put(SETTINGS_MASTER_PASSWORD,"");
+        contentValues.put(SETTINGS_NAME,SETTINGS_LOCATION_CHECK_TIMER);
+        contentValues.put(SETTINGS_VALUE,"0");
+        db.insert(SETTINGS_DATA_TABLE,null,contentValues);
+        contentValues.clear();
+        contentValues.put(SETTINGS_NAME,SETTINGS_REPORTING_TIME);
+        contentValues.put(SETTINGS_VALUE,"17");
+        db.insert(SETTINGS_DATA_TABLE,null,contentValues);
+        contentValues.clear();
+        contentValues.put(SETTINGS_NAME,SETTINGS_MASTER_PASSWORD);
+        contentValues.put(SETTINGS_VALUE,"");
         db.insert(SETTINGS_DATA_TABLE,null,contentValues);
     }
 
@@ -252,6 +260,7 @@ public class Database_handler extends SQLiteOpenHelper {
     }
 
     public void setHome(Location location) {
+       context.deleteFile(FILE_NAME);
         String data = "Latitude;" + location.getLatitude() + ";Longitude;" + location.getLongitude();
         writeToFile(data);
     }
@@ -356,10 +365,10 @@ public class Database_handler extends SQLiteOpenHelper {
         db.update(SETTINGS_DATA_TABLE,contentValues,SETTINGS_NAME+"=?",new String[]{key});
     }
     public String GetSettings(SQLiteDatabase db, String key){
-        Cursor c = db.rawQuery("SELECT * FROM "+ SETTINGS_DATA_TABLE,null);
+        Cursor c = db.rawQuery("SELECT * FROM "+ SETTINGS_DATA_TABLE+" WHERE "+ SETTINGS_NAME + "=?",new String[]{key});
         String value=null;
         if(c.moveToFirst()){
-            value=c.getString(c.getColumnIndex(key));
+            value=c.getString(c.getColumnIndex(SETTINGS_VALUE));
         }
         c.close();
         return value;

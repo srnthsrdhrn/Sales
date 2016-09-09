@@ -308,15 +308,19 @@ public class Settings extends AppCompatActivity implements NavigationView.OnNavi
             mContext = context;
             this.activity=Settings.this;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if(ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
-                    turnGPSOn();
-                    getLocation();
-                    stopUsingGPS();
+                try {
+                    if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        turnGPSOn();
+                        getLocation();
+                        stopUsingGPS();
+                    }
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        Toast.makeText(mContext, "Location is not Available without the Permission", Toast.LENGTH_LONG).show();
+                    }
+                    ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+                }catch (SecurityException e){
+                    e.printStackTrace();
                 }
-                if(shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
-                    Toast.makeText(mContext,"Location is not Available without the Permission",Toast.LENGTH_LONG).show();
-                }
-                ActivityCompat.requestPermissions(activity,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_CODE);
 
             }else {
                 try {

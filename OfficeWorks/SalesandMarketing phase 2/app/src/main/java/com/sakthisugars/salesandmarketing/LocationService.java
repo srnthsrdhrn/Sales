@@ -36,6 +36,14 @@ import android.os.SystemClock;
 import android.widget.Toast;
 import android.os.Process;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.util.Date;
 
 public class LocationService extends Service {
@@ -49,7 +57,8 @@ public class LocationService extends Service {
     private Handler mHandler;
     private Database_handler database_handler;
     SQLiteDatabase db;
-    long mInterval;
+
+    long mInterval=5000;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mNM = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -62,11 +71,13 @@ public class LocationService extends Service {
         db=database_handler.getWritableDatabase();
         mHandler = new Handler();
         mStatusChecker.run();
-        String[] time = (database_handler.GetSettings(db, Database_handler.SETTINGS_LOCATION_CHECK_TIMER)).split(";");
-        int hour = Integer.parseInt(time[0]);
-        int minutes= Integer.parseInt(time[1]);
-        mInterval = hour*60*60+minutes*60;
-
+        String times =database_handler.GetSettings(db, Database_handler.SETTINGS_LOCATION_CHECK_TIMER);
+        if(times!=null) {
+            String[] time = (times).split(";");
+            int hour = Integer.parseInt(time[0]);
+            int minutes = Integer.parseInt(time[1]);
+            mInterval = hour * 60 * 60 + minutes * 60;
+        }
         return 0;
     }
 
@@ -114,7 +125,6 @@ public class LocationService extends Service {
                     showNotification("Lat: "+ lat+"Long: "+ longt);
                     Date date = new Date();
                     database_handler.storeLocation(db, lat + "", longt + "", date.getTime() + "");
-
                 }
                 mHandler.postDelayed(mStatusChecker,mInterval);
             }
@@ -170,24 +180,7 @@ public class LocationService extends Service {
         // Send the notification.
         mNM.notify(NOTIFICATION, notification);
     }
-    private class StoreLocation extends AsyncTask<String,Void,Void>{
 
-        @Override
-        protected Void doInBackground(String... params) {
-
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-        }
-    }
 }
 
 

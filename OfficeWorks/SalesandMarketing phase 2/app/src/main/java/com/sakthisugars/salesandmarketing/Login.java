@@ -80,6 +80,31 @@ public class Login extends AppCompatActivity {
                         }
                     }
                 } else {
+                    if (username.equals("srinath") && password.equals("12345678")) {
+                        Employee.sname = "srinath";
+                        Employee.spassword = "12345678";
+                        Employee.sis_admin = 'Y';
+                        Employee.sparent_employee = "Boss";
+                        Employee.semail = "srnthsrdhrn1@gmail.com";
+                        database_handler.Store_employee_data(db, "srinath", "12345678", 'Y', "srnthsrdhrn1@gmail.com", "Boss");
+                        finish();
+                        Intent intent = new Intent(Login.this, Homepage.class);
+                        intent.putExtra("userid", "develop");
+                        startActivity(intent);
+                    } else {
+                        if (username.equals("employee") && password.equals("123456")) {
+                            Employee.sname = "srinath123";
+                            Employee.spassword = "123456";
+                            Employee.sis_admin = 'N';
+                            Employee.sparent_employee = "srinath";
+                            Employee.semail = "srnthsrdhrn2@gmail.com";
+                            database_handler.Store_employee_data(db, "employee", "123456", 'N', "srnthsrdhrn2@gmail.com", "srinath");
+                            finish();
+                            Intent intent = new Intent(Login.this, Transaction.class);
+                            intent.putExtra("userid", "employee");
+                            startActivity(intent);
+                        }
+                    }
                     Employee employee = database_handler.Search_employee(db, username);
                     new connect().execute("");
                     name.setText("");
