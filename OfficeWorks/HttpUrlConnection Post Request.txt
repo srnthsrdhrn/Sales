@@ -1,0 +1,32 @@
+HttpUrlconnection Post
+URL url = new URL("<server url>");
+HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
+httpUrlConnection.setDoOutput(true);
+httpUrlConnection.setDoInput(true);
+httpUrlConnection.setRequestMethod("POST");
+httpUrlConnection.setRequestProperty("User-Agent", "GYUserAgentAndroid");
+httpUrlConnection.setRequestProperty("Content-Type", "application/json");
+httpUrlConnection.setUseCaches (false);
+
+DataOutputStream outputStream = new DataOutputStream(httpUrlConnection.getOutputStream());
+
+// what should I write here to output stream to post params to server ?
+
+outputStream.flush();
+outputStream.close();
+
+// get response
+InputStream responseStream = new BufferedInputStream(httpUrlConnection.getInputStream());
+BufferedReader responseStreamReader = new BufferedReader(new InputStreamReader(responseStream));
+String line = "";
+StringBuilder stringBuilder = new StringBuilder();
+while ((line = responseStreamReader.readLine()) != null) {
+    stringBuilder.append(line);
+}
+responseStreamReader.close();
+
+String response = stringBuilder.toString();
+JSONObject jsonResponse = new JSONObject(response);
+// the response is not I'm expecting
+
+return jsonResponse;

@@ -74,7 +74,11 @@ public class Transaction extends AppCompatActivity implements  NavigationView.On
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
             gpsTracker = new GPSTracker(this);
-            gpsTracker.getLocation();
+            try{
+                gpsTracker.getLocation();
+            }catch(SecurityException e){
+                gpsTracker.showSettingsAlert();
+            }
             if (!gpsTracker.canGetLocation) {
                 gpsTracker.showSettingsAlert();
             } else {
@@ -465,7 +469,7 @@ public class Transaction extends AppCompatActivity implements  NavigationView.On
     }
 
     //turn on the gps
-    public void turnGPSOn() {
+    public void turnGPSOn() throws SecurityException {
         Intent intent = new Intent("android.location.GPS_ENABLED_CHANGE");
         intent.putExtra("enabled", true);
         this.sendBroadcast(intent);

@@ -14,14 +14,18 @@ import java.util.List;
 public class Scheme_data_adapter extends RecyclerView.Adapter<Scheme_data_adapter.MyViewHolder> {
     private List<Scheme_data> content_list;
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView main_items,offer_items, discount;
+        public TextView main_items,offer_items, discount_amt,per_discount,Schemename,Schemeid,freeitem;
 
 
         public MyViewHolder(View view) {
             super(view);
             main_items = (TextView) view.findViewById(R.id.main_items);
             offer_items = (TextView) view.findViewById(R.id.offer_items);
-            discount = (TextView) view.findViewById(R.id.discount);
+            discount_amt = (TextView) view.findViewById(R.id.discount_amt);
+            per_discount = (TextView) view.findViewById(R.id.perdiscount);
+            Schemename = (TextView) view.findViewById(R.id.Schemename);
+            Schemeid = (TextView) view.findViewById(R.id.Schemeid);
+            freeitem = (TextView) view.findViewById(R.id.freeitem);
         }
     }
     public Scheme_data_adapter(List<Scheme_data> Scheme_data_list){
@@ -39,15 +43,27 @@ public class Scheme_data_adapter extends RecyclerView.Adapter<Scheme_data_adapte
         final Scheme_data content = content_list.get(position);
         holder.main_items.setText(content.getMain_items());
         holder.offer_items.setText(content.getOffer_items());
-        String text = content.getDiscount_value()+"";
-        if(content.getDiscount_value_type()==1){
-            text=text+"%";
+        String amount = content.getDiscount_amt() + "";
+        String perdiscount = content.getper_discount() + "";
+        if (content.getDiscount_amt() == 0) {
+            perdiscount = perdiscount + "%";
+            holder.discount_amt.setText(perdiscount);
+        } else if(content.getper_discount() == 0) {
+            amount = "Rs." + amount;
+            holder.per_discount.setText(amount);
         }
-        else {
-            text = "Rs." + text;
-        }
-        holder.discount.setText(text);
+
+        holder.Schemename.setText(content.getScheme_name());
+        // holder.Schemename.setText(content.getScheme_id());
+        //  holder.Schemeid.setText(content.getScheme_id());
+        holder.main_items.setText(content.getScheme_id());
+        holder.offer_items.setText(content.getScheme_id());
+        holder.per_discount.setText(amount);
+        holder.discount_amt.setText(perdiscount);
+        holder.freeitem.setText(content.getfreeitems());
+
     }
+
 
     @Override
     public int getItemCount() {

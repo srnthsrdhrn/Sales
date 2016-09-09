@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:theme="@style/AppTheme"
+    android:textColor="#fff"
+    tools:context="marketing.sales_marketing.Emp_Master">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dip"
+            android:weightSum="1">
+                  <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:text="Name"/>
+               <EditText
+                   android:layout_width="246dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/emp_name"
+                android:maxLength="10"
+                android:layout_marginTop="5dip"
+                android:layout_marginBottom="20dip"/>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:text="Head of the Employee"/>
+            <EditText android:layout_width="246dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/emp_head"
+                android:maxLength="10"
+                android:layout_marginTop="5dip"
+                android:layout_marginBottom="20dip" />
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:text="Department"/>
+            <EditText android:layout_width="246dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/emp_department"
+                android:maxLength="10"
+                android:layout_marginTop="5dip"
+                android:layout_marginBottom="20dip"/>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:text="Designation"/>
+            <EditText android:layout_width="246dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/emp_designation"
+                android:maxLength="10"
+                android:layout_marginTop="5dip"
+                android:layout_marginBottom="20dip"/>
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:text="Incentive"/>
+            <EditText android:layout_width="246dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/emp_incentive"
+                android:maxLength="10"
+                android:layout_marginTop="5dip"
+                android:layout_marginBottom="20dip" />
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:text="Is Employee"/>
+
+            <RadioGroup
+                android:id="@+id/rdoisimpgng"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+
+                <RadioButton
+                    android:id="@+id/no"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="NO "
+                    android:checked="true" />
+                <RadioButton
+                    android:id="@+id/yes"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="YES" />
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <Button
+                    android:id="@+id/btnSendSMS"
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dip"
+                    android:background="#E91E63"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="Send SMS"/>
+
+
+            </TableRow>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</RelativeLayout>

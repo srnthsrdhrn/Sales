@@ -1,0 +1,97 @@
+  private class connect extends AsyncTask<String,Integer,String>{
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(Login.this);
+            progressDialog.setTitle("Processing");
+            progressDialog.setMessage("Please wait");
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setMax(100);
+            progressDialog.show();
+            super.onPreExecute();
+        }
+        @Override
+        protected String doInBackground(String... params) {
+            String string="";
+            try {
+                URL url = new URL(params[0]);
+                try {
+                    HttpURLConnection httpURLConnection= (HttpURLConnection)url.openConnection();
+                    httpURLConnection.setDoInput(true);
+                    httpURLConnection.setConnectTimeout(10000);
+                    httpURLConnection.setReadTimeout(10000);
+                    InputStream inputStream = httpURLConnection.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    if(httpURLConnection.getResponseCode()==HttpURLConnection.HTTP_OK) {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            stringBuilder.append(line);
+                            stringBuilder.append("\n");
+                            publishProgress(stringBuilder.length(),httpURLConnection.getContentLength());
+                        }
+                        string = stringBuilder.toString();
+                        reader.close();
+                        inputStream.close();
+                    }
+                    httpURLConnection.disconnect();
+                }catch (SocketTimeoutException e){
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(Login.this, "Slow Internet Connection \n Check your connection and Try Again", Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
+                        }
+                    });
+                }catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            return string;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            int data_received=values[0];
+            int total=values[1];
+            int progress=data_received/total*100;
+            progressDialog.setProgress(progress);
+            super.onProgressUpdate(values);
+        }
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            JSONObject jsonObject = null;
+            try {
+                jsonObject = new JSONObject(s);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            progressDialog.dismiss();
+            if(jsonObject!=null){
+                try {
+                    String name = jsonObject.getString(NAME);
+                    String password=jsonObject.getString(PASSWORD);
+                    String email=jsonObject.getString(EMAIL);
+                    String parent_employee=jsonObject.getString(PARENT_EMPLOYEE);
+                    int is_admin=jsonObject.getInt(IS_ADMIN);
+                    Employee.sname=name;
+                    Employee.semail=email;
+                    Employee.sparent_employee=parent_employee;
+                    Employee.sis_admin=is_admin;
+                    Employee.spassword=password;
+                    database_handler.Store_employee_data(db,name,password,is_admin,email,parent_employee);
+                    finish();
+                    startActivity(new Intent(Login.this, Homepage.class));
+                }catch (JSONException e){
+                    Toast.makeText(Login.this,"Error Retrieving data, Please try again",Toast.LENGTH_LONG).show();
+                }
+            }else{
+                Toast.makeText(Login.this,"Incorrect Username or Password",Toast.LENGTH_LONG).show();
+            }
+        }
+    }
